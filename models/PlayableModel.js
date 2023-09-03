@@ -1,0 +1,5 @@
+class Playable{
+    constructor(){
+        
+    }
+}
