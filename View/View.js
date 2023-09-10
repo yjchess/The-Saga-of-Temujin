@@ -43,8 +43,12 @@ class View{
 
     displayUnits(units){
         units.forEach((unit)=>{
-            convertCoordToHTMLElement(unit.coord).childNodes[0].classList.add(unit.owner);
-            convertCoordToHTMLElement(unit.coord).childNodes[0].classList.add(unit.name);
+            let location = convertCoordToHTMLElement(unit.coord).childNodes[0];
+
+            
+            location.classList.add("unit");
+            location.classList.add(unit.owner);
+            location.classList.add(unit.name);
         });
     }
 
@@ -55,8 +59,42 @@ class View{
             location.classList.add("building");
             location.classList.add(building.owner);
             location.classList.add(building.name);
-            
+
         });
+    }
+
+    displayBuilding(building){
+        let location = convertCoordToHTMLElement(building.coord).childNodes[0];
+        location.classList.add("building");
+        location.classList.add(building.owner);
+        location.classList.add(building.name);
+    }
+
+    displayMovableSquares(movable){
+        // console.log(movable);
+        movable.forEach((square)=>{
+            document.querySelector(`.x${square[0]}.y${square[1]}`).childNodes[0].classList.add("movable")
+        });
+    }
+
+    displayAttackableSquares(attackable){
+        attackable.forEach((square)=>{
+            square.childNodes[0].classList.add("attackable");
+        })
+    }
+
+    drawUnit(unit, player){
+
+        let location = convertCoordToHTMLElement(unit.coord);
+        location.childNodes[0].classList.add(unit.name);
+        location.childNodes[0].classList.add(player);
+    }
+
+    eraseUnit(unit, player){
+        console.log(unit);
+        let location = convertCoordToHTMLElement(unit.coord);
+        location.childNodes[0].classList.remove(unit.name);
+        location.childNodes[0].classList.remove(player);
     }
 
 

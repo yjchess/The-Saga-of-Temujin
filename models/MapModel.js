@@ -28,6 +28,18 @@ class Map{
 
     }
 
+    checkPassableTerrain([x,y]){
+        this.impassableFeatures.forEach((feature)=>{
+            if(x >= feature[0][0] && x <= feature[1][0]){
+                if (y >= feature[0][1] && y <= feature[1][1]){
+                    return false
+                }
+            }
+        });
+
+        return true;
+    }
+
 
         
 

@@ -4,6 +4,7 @@ class Computer extends Playable{
         super();
         switch (level) {
             case 1:
+                this.supply = 5;
                 this.units =[
 
                     new Unit("computer", VILLAGER, [4,3], {type:"farmer", farm:[5,3]}),
@@ -20,11 +21,11 @@ class Computer extends Playable{
                     new Building("computer", FARM, [6,3]),
                     new Building("computer", FARM, [6,4]),
 
-                    new Building("computer", YURT, [19,3]),
-                    new Building("computer", YURT, [19,4]),
-                    new Building("computer", YURT, [20,3]),
-                    new Building("computer", YURT, [20,4]),
-                    new Building("computer", YURT, [21,3]),
+                    new Building("computer", YURT, [19,3], ["villager"]),
+                    new Building("computer", YURT, [19,4], ["villager"]),
+                    new Building("computer", YURT, [20,3], ["villager"]),
+                    new Building("computer", YURT, [20,4], ["villager"]),
+                    new Building("computer", YURT, [21,3], ["villager"]),
                 ]
 
                 this.resources = {food:0, gold:0}
@@ -44,7 +45,7 @@ class Computer extends Playable{
                 if (unit.AI_behaviour.type ==="farmer"){
                     if (Math.abs(unit.coord[0] - unit.AI_behaviour.farm[0] <= 1) && Math.abs(unit.coord[1] - unit.AI_behaviour.farm[1] <=1)){
                         this.resources.food +=1;
-                        // console.log(unit, "farmed. Food is now at:",this.resources.food);
+                        console.log(unit, "farmed. Food is now at:",this.resources.food);
                     }
                     else{
                         unit.findClosestPath(unit.AI_behaviour.farm);
@@ -56,11 +57,15 @@ class Computer extends Playable{
                         let building_location = unit.AI_behaviour.buildings[0][1];
 
                         if(unit.coord[0]>=building_location[0]){
-                            unit.move(convertCoordToHTMLElement([building_location[0]+1, building_location[1]]));
-                            controller.view.displayAll();
+
+                            controller.view.eraseUnit(unit, "computer");
+                            unit.move([building_location[0]+1, building_location[1]]);
+                            controller.view.drawUnit(unit, "computer");
+                            // controller.view.displayAll();
                             if(unit.AI_behaviour.buildings[0][0] === "yurt" && this.resources.food > 5){
                                 this.resources.food -=5;
-                                unit.build(YURT, building_location);
+                                unit.build(YURT, building_location, ["villager"]);
+                                this.supply +=1;
                                 unit.AI_behaviour.buildings.shift();
                             }
                         }
@@ -70,6 +75,22 @@ class Computer extends Playable{
                 }
             }
         )
+
+        console.log(this.units.length);
+        console.log(this.supply);
+        console.log(this.resources.food);
+        this.buildings.forEach((building)=>{
+            console.log(building);
+            if (building.name === "yurt"){
+                if(building.unitPriorities !== undefined ){
+                    if ((building.unitPriorities[0] === "villager") && (this.resources.food > 2) && (this.supply > this.units.length)){
+                        console.log("CAN BUILD VILLAGER");
+                    }
+                }
+
+            }
+        })
+
     }
 
 }

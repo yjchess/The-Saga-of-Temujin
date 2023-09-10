@@ -78,11 +78,13 @@ class Unit{
 
     }
 
-    move(location){
-        console.log(this, location);
-        this.location = location;
-        this.coord = [parseInt(location.getAttribute("data-x")), parseInt(location.getAttribute("data-y"))];
+    move(coord){
+        this.coord = coord;
         this.moved = true;
+    }
+
+    resetMovement(){
+        this.moved = false;
     }
 
     attack(location){
@@ -125,14 +127,17 @@ class Unit{
 
     }
 
-    build(building, coord){
+    build(building, coord, unitPref){
+
+        let buildingEntity = new Building(this.owner, building, coord)
+        controller.view.displayBuilding(buildingEntity);
 
         if(this.owner === "player"){
-            controller.player.buildings.push(new Building (building, coord))
+            controller.player.buildings.push(new Building ("player", building, coord))
         }
 
         if(this.owner === "computer"){
-            controller.computer.buildings.push(new Building (building, coord))
+            controller.computer.buildings.push(new Building ("computer", building, coord, unitPref))
         }
 
     }
