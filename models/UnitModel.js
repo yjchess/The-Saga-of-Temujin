@@ -22,6 +22,8 @@ class Unit{
         this.attacked = false;
         this.selected = false;
 
+        this.destroyed = false;
+
 
         this.AI_behaviour = AI_behaviour;
     }
@@ -67,7 +69,17 @@ class Unit{
             for (let x = x_range[0]; x <= x_range[1]; x++) {
                 for (let y = y_range[0]; y <= y_range[1]; y++) {
                     let potentialSpot = document.querySelector(`.x${x}.y${y}`);
-                    if(potentialSpot.classList.contains("computer") || potentialSpot.childNodes[0].classList.contains("computer")){
+                    let enemy;
+
+                    if (this.owner === "player"){
+                        enemy = "computer"
+                    }
+                    else{
+                        enemy = "player"
+                    }
+
+
+                    if(potentialSpot.classList.contains(enemy) || potentialSpot.childNodes[0].classList.contains(enemy)){
                         attackableSquares.push(potentialSpot);
                     }
                 }                
@@ -87,10 +99,14 @@ class Unit{
 
     resetMovement(){
         this.moved = false;
+        this.attacked = false;
     }
 
     attack(location){
-        
+        let enemy = getEntityAt(location);
+        console.log(enemy.health);
+        enemy.health -= this.damage;
+        console.log(enemy.health);
     }
 
 
@@ -103,9 +119,9 @@ class Unit{
         // possibleMoves.push(this.coord);
         // console.log(possibleMoves, this);
         if (possibleMoves.includes(destination)){
-            controller.view.eraseUnit(this);
+            controller.view.eraseUnit(this, this.owner);
             this.move(destination);
-            controller.view.drawUnit(this);
+            controller.view.drawUnit(this, this.owner);
         }
 
         else{
@@ -135,9 +151,9 @@ class Unit{
             })
 
 
-            controller.view.eraseUnit(this);
+            controller.view.eraseUnit(this, this.owner);
             this.move([moveX,moveY]);
-            controller.view.drawUnit(this);
+            controller.view.drawUnit(this, this.owner);
         }
 
     }
@@ -159,6 +175,7 @@ class Unit{
 
     findClosestEnemy(){
         let closestDistance = 26;
+        // console.log(controller.player.units);
         let selectedUnit = controller.player.units[0];
 
         controller.player.units.forEach((unit)=>{
@@ -176,6 +193,24 @@ class Unit{
         });
 
         return selectedUnit.coord;
+    }
+
+    destroySelf(){
+        if(this.owner === "player"){
+            for (const [index, unit] of controller.player.units.entries()) {
+                if ((unit === this) && (this.destroyed === false)){
+
+                    controller.player.units.splice(index, 1);
+
+                    controller.view.eraseUnit(this, this.owner);
+                    this.destroyed = true;
+                    return;
+                }
+                
+            }
+        }
+
+
     }
 
 }

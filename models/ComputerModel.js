@@ -78,16 +78,29 @@ class Computer extends Playable{
                 else if (unit.AI_behaviour.type ==="aggressive"){
                     // console.log("HERE");
                     let target = unit.findClosestEnemy();
+                    // console.log(target);
                     let attackable = unit.calculatePossibleAttacks();
                     attackable.forEach((attackSquare)=>{
-                        if(convertToHtml(target) === attackSquare){
-                            console.log("CAN ATTACK");
+                        if(convertToHtml(target).toString() === attackSquare.toString()){
+                            let enemy = getEntityAt(target);
+                            if (enemy){
+                                unit.attack(target);
+                                if(enemy.health <= 0){
+                                    enemy.destroySelf();
+                                }
+                            }
                         }
                     })
-                    // console.log("TARGET=",target);
+
                     unit.findClosestPath(target);
                 }
+
+                
+                if (controller.player.units.length ===0){
+                    alert("You Lost!");
+                }
             }
+
         )
 
         // console.log(this.units.length);

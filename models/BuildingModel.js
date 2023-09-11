@@ -49,7 +49,7 @@ class Building{
             controller.computer.units.push(unitObject);
         }
 
-        controller.view.drawUnit(unitObject)
+        controller.view.drawUnit(unitObject, "computer")
 
     }
 
