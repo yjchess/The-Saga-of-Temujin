@@ -81,6 +81,8 @@ class Unit{
     move(coord){
         this.coord = coord;
         this.moved = true;
+        
+        controller.updateTakenSpots();
     }
 
     resetMovement(){
@@ -98,31 +100,44 @@ class Unit{
 
     findClosestPath(destination){
         let possibleMoves = this.calculatePossibleMoves();
-        console.log(possibleMoves, this);
+        // possibleMoves.push(this.coord);
+        // console.log(possibleMoves, this);
         if (possibleMoves.includes(destination)){
+            controller.view.eraseUnit(this);
             this.move(destination);
+            controller.view.drawUnit(this);
         }
 
         else{
             
-            let smallestX = 26;
-            let smallestY = 26;
+            let distanceX = 26;
+            let distanceY = 26;
+
+            let moveX;
+            let moveY;
 
             possibleMoves.forEach((move)=>{
-                if (move[1] < smallestY){
-                    smallestY = move[1];
+                // console.log(move, destination, Math.abs(destination[1]-move[1]));
+                if (Math.abs(destination[1] - move[1]) < distanceY){
+                    distanceY = Math.abs(destination[1] - move[1]);
+                    moveY = move[1];
                 }
             })
 
             possibleMoves.forEach((move)=>{
-                if (move[1] === smallestY){
-                    if (move[0] < smallestX){
-                        smallestX = move[0];
+                if(move[1] === moveY){
+                    if (Math.abs(destination[0] - move[0]) < distanceX){
+                        distanceX = Math.abs(destination[0] - move[0])
+                        moveX = move[0];
                     }
                 }
+
             })
 
-            this.move(findHtmlSquareElement([smallestX,smallestY]))
+
+            controller.view.eraseUnit(this);
+            this.move([moveX,moveY]);
+            controller.view.drawUnit(this);
         }
 
     }
@@ -140,6 +155,27 @@ class Unit{
             controller.computer.buildings.push(new Building ("computer", building, coord, unitPref))
         }
 
+    }
+
+    findClosestEnemy(){
+        let closestDistance = 26;
+        let selectedUnit = controller.player.units[0];
+
+        controller.player.units.forEach((unit)=>{
+            let x_gap = unit.coord[0] - this.coord[0];
+            let y_gap = unit.coord[1] - this.coord[1];
+
+            if (x_gap < closestDistance){
+                closestDistance = x_gap;
+                selectedUnit = unit;
+            }
+            if (y_gap < closestDistance){
+                closestDistance = y_gap;
+                selectedUnit = unit;
+            }
+        });
+
+        return selectedUnit.coord;
     }
 
 }

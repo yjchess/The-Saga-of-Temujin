@@ -91,7 +91,7 @@ class View{
     }
 
     eraseUnit(unit, player){
-        console.log(unit);
+        // console.log(unit);
         let location = convertCoordToHTMLElement(unit.coord);
         location.childNodes[0].classList.remove(unit.name);
         location.childNodes[0].classList.remove(player);

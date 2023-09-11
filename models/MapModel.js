@@ -12,7 +12,7 @@ class Map{
 
                 this.impassableFeatures = [
                     [[1,12], [11,13],"river"],
-                    [[14,12], [25,13],"river"],
+                    [[15,12], [25,13],"river"],
                 ]
 
                 this.buildableFeatures = [

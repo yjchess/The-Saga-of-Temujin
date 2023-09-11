@@ -127,7 +127,7 @@ class Controller{
     takenSpotIncludes(spot){
         let conditionResult = false;
         this.takenSpots.forEach((taken)=>{
-
+            // console.log(convertCoordToHTMLElement(taken));
             if(taken.toString() === spot.toString()){
                 conditionResult = true;
             }
@@ -149,16 +149,31 @@ class Controller{
         })
 
         this.player.buildings.forEach((building)=>{
-            building.coords.forEach((coord)=>{
-                this.takenSpots.push(coord);
-            })
+            this.takenSpots.push(building.coord);
         })
 
         this.computer.buildings.forEach((building)=>{
-            building.coords.forEach((coord)=>{
-                this.takenSpots.push(coord);
-            })
+            this.takenSpots.push(building.coord);
         })
+
+        this.map.impassableFeatures.forEach((feature)=>{
+
+            let rangeX = Math.abs(feature[1][0] - feature[0][0] );
+            let rangeY = Math.abs(feature [1][1] - feature[0][1]);
+            // console.log(rangeX, rangeY);
+
+
+            for (let x = feature[0][0]; x <= feature[0][0]+rangeX; x++){
+
+                for (let y = feature[0][1]; y <= feature[0][1]+rangeY; y++){
+
+                    this.takenSpots.push([x,y]);
+                    // console.log(x,y);
+                }
+            }
+        });
+
+        // console.log("TAKEN SPOTS =",this.takenSpots);
 
         return this.takenSpots;
     }

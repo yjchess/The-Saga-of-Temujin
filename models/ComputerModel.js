@@ -39,13 +39,14 @@ class Computer extends Playable{
     computerTurn(){
         this.units.forEach(
             (unit)=>{
+                // console.log(unit.AI_behaviour.type);
                 unit.moved = false;
                 unit.attacked = false;
 
                 if (unit.AI_behaviour.type ==="farmer"){
                     if (Math.abs(unit.coord[0] - unit.AI_behaviour.farm[0] <= 1) && Math.abs(unit.coord[1] - unit.AI_behaviour.farm[1] <=1)){
                         this.resources.food +=1;
-                        console.log(unit, "farmed. Food is now at:",this.resources.food);
+                        // console.log(unit, "farmed. Food is now at:",this.resources.food);
                     }
                     else{
                         unit.findClosestPath(unit.AI_behaviour.farm);
@@ -73,18 +74,36 @@ class Computer extends Playable{
 
 
                 }
+
+                else if (unit.AI_behaviour.type ==="aggressive"){
+                    // console.log("HERE");
+                    let target = unit.findClosestEnemy();
+                    let attackable = unit.calculatePossibleAttacks();
+                    attackable.forEach((attackSquare)=>{
+                        if(convertToHtml(target) === attackSquare){
+                            console.log("CAN ATTACK");
+                        }
+                    })
+                    // console.log("TARGET=",target);
+                    unit.findClosestPath(target);
+                }
             }
         )
 
-        console.log(this.units.length);
-        console.log(this.supply);
-        console.log(this.resources.food);
+        // console.log(this.units.length);
+        // console.log(this.supply);
+        // console.log(this.resources.food);
         this.buildings.forEach((building)=>{
-            console.log(building);
+
             if (building.name === "yurt"){
+                
                 if(building.unitPriorities !== undefined ){
-                    if ((building.unitPriorities[0] === "villager") && (this.resources.food > 2) && (this.supply > this.units.length)){
-                        console.log("CAN BUILD VILLAGER");
+                    let building_location = building.coord;
+                    let unit_location = building.calculateNearestFreeSpot(building_location, 1);
+                    // console.log(unit_location);
+                    if ((building.unitPriorities[0] === "villager") && (this.resources.food > 2) && (this.supply > this.units.length) && (unit_location != undefined)){
+                        building.produce(VILLAGER, unit_location);
+                        this.resources.food -= 2;
                     }
                 }
 

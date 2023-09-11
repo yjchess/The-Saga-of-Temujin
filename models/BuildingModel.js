@@ -31,4 +31,38 @@ class Building{
 
         return coords
     }
+
+    produce(unit, coord){
+        
+        let unitObject;
+
+        if(this.owner === "player"){
+
+            unitObject = new Unit ("player", unit, coord);
+            controller.player.units.push(unitObject);
+
+        }
+
+        if(this.owner === "computer"){
+
+            unitObject = new Unit ("computer", unit, coord, {type:"aggressive"});
+            controller.computer.units.push(unitObject);
+        }
+
+        controller.view.drawUnit(unitObject)
+
+    }
+
+    calculateNearestFreeSpot(location, range){
+        for (let i = location[0]-range; i < location[0]+range; i++){
+            for (let j = location[1]-range; j < location[1]+range; j++){
+                let spot = [i,j]
+                controller.updateTakenSpots();
+                if(!controller.takenSpotIncludes(spot)){
+                    return spot;
+                }
+
+            }
+        }
+    }
 }
