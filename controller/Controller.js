@@ -31,6 +31,8 @@ class Controller{
     endPlayerTurn(){
 
         this.player.units.forEach((unit)=>{unit.resetMovement();})
+        removeActionOverlay("movable");
+        removeActionOverlay("attackable");
 
         this.computer.computerTurn();
     }
@@ -44,6 +46,55 @@ class Controller{
             location.addEventListener("click", unitMovementEvent);
         })
 
+
+        this.player.units.forEach((unit)=>{
+            let location = convertCoordToHTMLElement(unit.coord);
+            let unitHoverEvent = ()=>this.displayHoverInfo(unit);
+            this.events.push([location, unitHoverEvent]);
+    
+            location.addEventListener("mouseover", unitHoverEvent);
+        })
+
+        this.computer.units.forEach((unit)=>{
+            let location = convertCoordToHTMLElement(unit.coord);
+            let unitHoverEvent = ()=>this.displayHoverInfo(unit);
+            this.events.push([location, unitHoverEvent]);
+    
+            location.addEventListener("mouseover", unitHoverEvent);
+        })
+
+    }
+
+    displayHoverInfo(unit){
+        document.querySelector(".imgHover").innerHTML = `<img src = ${unit.name}.png></img>`
+        document.querySelector(".ownerHover").innerHTML = `<b>owner: ${unit.owner}</b>`
+        document.querySelector(".nameHover").innerHTML = `<b>name: ${unit.name}</b>`
+        document.querySelector(".hpHover").innerHTML = `<b>health: ${unit.health}</b>`
+        document.querySelector(".movementHover").innerHTML = `<b>movement: ${unit.movement}</b>`
+        document.querySelector(".rangeHover").innerHTML = `<b>range: ${unit.range}</b>`
+        document.querySelector(".damageHover").innerHTML = `<b>damage: ${unit.damage}</b>`
+        document.querySelector(".buildHover").innerHTML = `<b>build: <br>N.A. in hover</b>`
+    }
+
+    displaySelectInfo(unit){
+        document.querySelector(".imgSelect").innerHTML = `<img src = ${unit.name}.png></img>`
+        document.querySelector(".ownerSelect").innerHTML = `<b>owner: ${unit.owner}</b>`
+        let name = document.querySelector(".nameSelect").innerHTML = `<b>name: ${unit.name}</b>`
+        document.querySelector(".hpSelect").innerHTML = `<b>health: ${unit.health}</b>`
+        document.querySelector(".movementSelect").innerHTML = `<b>movement: ${unit.movement}</b>`
+        document.querySelector(".rangeSelect").innerHTML = `<b>range: ${unit.range}</b>`
+        document.querySelector(".damageSelect").innerHTML = `<b>damage: ${unit.damage}</b>`
+        if(name === `<b>name: villager</b>`){
+            document.querySelector(".buildSelect").innerHTML = `<b>build: <br> <button class ="yurtButton">Yurt</button> <button class="farmButton">Farm</button></b>`;
+            document.querySelector(".yurtButton").addEventListener("click", ()=> unit.calculatePossibleBuilds("yurt"));
+            document.querySelector(".yurtButton").addEventListener("click", ()=> unit.calculatePossibleBuilds("farm"));
+
+        }
+        else{
+            document.querySelector(".buildSelect").innerHTML = `<b>build: <br>Can't Build</b>`
+        }
+
+        
     }
 
     displayUnitMovement(unit, move){
@@ -59,7 +110,7 @@ class Controller{
     }
 
     displayMovementPossibilities(unit){
-
+        this.displaySelectInfo(unit);
         if(document.querySelectorAll(".movable").length !== 0 || document.querySelectorAll(".attackable").length !== 0){
             removeActionOverlay("movable");
             removeActionOverlay("attackable");
@@ -73,11 +124,8 @@ class Controller{
         this.refreshEvents();
 
         let movable = unit.calculatePossibleMoves();
-
-
-
         let attackable = unit.calculatePossibleAttacks();
-        this.view.displayAttackableSquares(attackable);
+
 
         if(movable){
             movable.forEach((move)=>{
@@ -91,11 +139,24 @@ class Controller{
             this.view.displayMovableSquares(movable);
         }
 
+        if(attackable){
+            attackable.forEach((attack)=>{
+                console.log(attack);
+                let attackment = convertToHtml(attack);
+                let unitAttackmentEvent = () => unit.attack(attack);
+
+                this.events.push([attackment, unitAttackmentEvent]);
+                attackment.addEventListener("click", unitAttackmentEvent);
+            })
+            this.view.displayAttackableSquares(attackable);
+        }
+
     }
 
     refreshEvents(){
         this.events.forEach((event)=>{
             event[0].removeEventListener("click", event[1]);
+            event[0].removeEventListener("mouseover", event[1]);
         });
         this.assignClickEvents();
     }
@@ -104,7 +165,7 @@ class Controller{
         let buildable = [];
 
         this.map.features.forEach((feature)=>{
-            if (feature[1] === "dark_dirt"){
+            if (feature[2] === "dark_dirt"){
                 buildable.push(feature);
             }
         })

@@ -18,6 +18,7 @@ class Building{
         this.coords = this.calculateCoords();
 
         this.unitPriorities = unitPriorities; //the units that the AI will try to build
+        this.destroyed = false;
     }
 
     calculateCoords(){
@@ -64,5 +65,37 @@ class Building{
 
             }
         }
+    }
+
+    destroySelf(){
+        if(this.owner === "player"){
+            for (const [index, building] of controller.player.buildings.entries()) {
+                if ((building === this) && (this.destroyed === false)){
+
+                    controller.player.buildings.splice(index, 1);
+
+                    controller.view.eraseBuilding(this, this.owner);
+                    this.destroyed = true;
+                    return;
+                }
+                
+            }
+        }
+
+        if(this.owner === "computer"){
+            for (const [index, building] of controller.computer.buildings.entries()) {
+                if ((building === this) && (this.destroyed === false)){
+
+                    controller.computer.buildings.splice(index, 1);
+
+                    controller.view.eraseBuilding(this, this.owner);
+                    this.destroyed = true;
+                    return;
+                }
+                
+            }
+        }
+
+
     }
 }

@@ -27,4 +27,5 @@ function getEntityAt(location){
             return checkable[x];
         }
     }
+    
 }

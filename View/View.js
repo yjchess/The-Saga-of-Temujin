@@ -79,6 +79,7 @@ class View{
 
     displayAttackableSquares(attackable){
         attackable.forEach((square)=>{
+            square = convertToHtml(square);
             square.childNodes[0].classList.add("attackable");
         })
     }
@@ -95,6 +96,16 @@ class View{
         let location = convertCoordToHTMLElement(unit.coord);
         location.childNodes[0].classList.remove(unit.name);
         location.childNodes[0].classList.remove(player);
+    }
+
+    
+    eraseBuilding(building, player){
+        // console.log(unit);
+        let location = convertCoordToHTMLElement(building.coord);
+        location.childNodes[0].classList.remove(building.name);
+        location.childNodes[0].classList.remove(player);
+        location.childNodes[0].classList.remove("building");
+        
     }
 
 

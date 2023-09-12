@@ -68,7 +68,8 @@ class Unit{
 
             for (let x = x_range[0]; x <= x_range[1]; x++) {
                 for (let y = y_range[0]; y <= y_range[1]; y++) {
-                    let potentialSpot = document.querySelector(`.x${x}.y${y}`);
+                    // let potentialSpot = document.querySelector(`.x${x}.y${y}`);
+                    let potentialSpot = [x,y];
                     let enemy;
 
                     if (this.owner === "player"){
@@ -79,7 +80,10 @@ class Unit{
                     }
 
 
-                    if(potentialSpot.classList.contains(enemy) || potentialSpot.childNodes[0].classList.contains(enemy)){
+                    // if(potentialSpot.classList.contains(enemy) || potentialSpot.childNodes[0].classList.contains(enemy)){
+                    //     attackableSquares.push(potentialSpot);
+                    // }
+                    if((getEntityAt(potentialSpot)!== undefined && getEntityAt(potentialSpot).owner === enemy)){
                         attackableSquares.push(potentialSpot);
                     }
                 }                
@@ -88,6 +92,13 @@ class Unit{
 
         return (attackableSquares);
 
+    }
+
+    calculatePossibleBuilds(buildingName){
+        let spotsRange = controller.calculateBuildableSpots();
+        spotsRange.forEach((range)=>{
+
+        })
     }
 
     move(coord){
@@ -107,6 +118,16 @@ class Unit{
         console.log(enemy.health);
         enemy.health -= this.damage;
         console.log(enemy.health);
+
+        if(enemy.health <= 0){
+            enemy.destroySelf();
+            controller.updateTakenSpots();
+        }
+        
+        this.attacked = true;
+        removeActionOverlay("attackable");
+        removeActionOverlay("movable");
+        controller.refreshEvents();
     }
 
 
@@ -182,10 +203,10 @@ class Unit{
             let x_gap = unit.coord[0] - this.coord[0];
             let y_gap = unit.coord[1] - this.coord[1];
 
-            if (x_gap < closestDistance){
-                closestDistance = x_gap;
-                selectedUnit = unit;
-            }
+            // if (x_gap < closestDistance){
+            //     closestDistance = x_gap;
+            //     selectedUnit = unit;
+            // }
             if (y_gap < closestDistance){
                 closestDistance = y_gap;
                 selectedUnit = unit;
@@ -201,6 +222,20 @@ class Unit{
                 if ((unit === this) && (this.destroyed === false)){
 
                     controller.player.units.splice(index, 1);
+
+                    controller.view.eraseUnit(this, this.owner);
+                    this.destroyed = true;
+                    return;
+                }
+                
+            }
+        }
+
+        if(this.owner === "computer"){
+            for (const [index, unit] of controller.computer.units.entries()) {
+                if ((unit === this) && (this.destroyed === false)){
+
+                    controller.computer.units.splice(index, 1);
 
                     controller.view.eraseUnit(this, this.owner);
                     this.destroyed = true;

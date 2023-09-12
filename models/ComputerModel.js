@@ -78,11 +78,13 @@ class Computer extends Playable{
                 else if (unit.AI_behaviour.type ==="aggressive"){
                     // console.log("HERE");
                     let target = unit.findClosestEnemy();
+                    console.log(target);
                     // console.log(target);
                     let attackable = unit.calculatePossibleAttacks();
                     attackable.forEach((attackSquare)=>{
-                        if(convertToHtml(target).toString() === attackSquare.toString()){
+                        if(convertToHtml(target).toString() === convertToHtml(attackSquare).toString()){
                             let enemy = getEntityAt(target);
+                            console.log(enemy);
                             if (enemy){
                                 unit.attack(target);
                                 if(enemy.health <= 0){
