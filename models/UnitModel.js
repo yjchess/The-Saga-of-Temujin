@@ -95,10 +95,7 @@ class Unit{
     }
 
     calculatePossibleBuilds(buildingName){
-        let spotsRange = controller.calculateBuildableSpots();
-        spotsRange.forEach((range)=>{
-
-        })
+        alert("Future Feature");
     }
 
     move(coord){

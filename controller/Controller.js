@@ -88,7 +88,6 @@ class Controller{
             document.querySelector(".buildSelect").innerHTML = `<b>build: <br> <button class ="yurtButton">Yurt</button> <button class="farmButton">Farm</button></b>`;
             document.querySelector(".yurtButton").addEventListener("click", ()=> unit.calculatePossibleBuilds("yurt"));
             document.querySelector(".yurtButton").addEventListener("click", ()=> unit.calculatePossibleBuilds("farm"));
-
         }
         else{
             document.querySelector(".buildSelect").innerHTML = `<b>build: <br>Can't Build</b>`
