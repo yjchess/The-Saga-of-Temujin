@@ -220,7 +220,7 @@ class Unit{
                     this.destroyed = true;
 
                     if(controller.computer.units.length === 0){
-                        alert("You Win!")
+                        controller.nextLevel();
                     }
                     return;
                 }

@@ -1,6 +1,7 @@
 
 class Controller{
     constructor(){
+        this.level = 1;
         this.view = new View();
         this.map = new Map(1);
         this.player = new Player(1);
@@ -34,6 +35,21 @@ class Controller{
         removeActionOverlay();
 
         this.computer.computerTurn();
+    }
+
+    nextLevel(){
+        this.level += 1;
+        if(this.level === 3){
+            alert("You beat the game!");
+        }
+        else{
+            this.map = new Map(level);
+            this.player = new Player(level);
+            this.computer = new Computer(level);
+            this.startGame();
+        }
+
+        
     }
 
     assignClickEvents(){
