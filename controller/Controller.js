@@ -87,7 +87,7 @@ class Controller{
         if(name === `<b>name: villager</b>`){
             document.querySelector(".buildSelect").innerHTML = `<b>build: <br> <button class ="yurtButton">Yurt</button> <button class="farmButton">Farm</button></b>`;
             document.querySelector(".yurtButton").addEventListener("click", ()=> unit.calculatePossibleBuilds("yurt"));
-            document.querySelector(".yurtButton").addEventListener("click", ()=> unit.calculatePossibleBuilds("farm"));
+            document.querySelector(".farmButton").addEventListener("click", ()=> unit.calculatePossibleBuilds("farm"));
 
         }
         else{
@@ -98,33 +98,40 @@ class Controller{
     }
 
     displayUnitMovement(unit, move){
-        this.view.eraseUnit(unit, "player");
-        unit.move(move);
-
-        removeActionOverlay("movable");
-        removeActionOverlay("attackable");
-
-        this.view.drawUnit(unit, "player");
-        this.refreshEvents();
+        if(convertCoordToHTMLElement(move).classList.contains("movable")){
+            this.view.eraseUnit(unit, "player");
+            unit.move(move);
+    
+            removeActionOverlay("movable");
+            removeActionOverlay("attackable");
+            removeActionOverlay("buildable");
+    
+            this.view.drawUnit(unit, "player");
+            this.refreshEvents();
+        }
 
     }
 
     displayMovementPossibilities(unit){
         this.displaySelectInfo(unit);
-        if(document.querySelectorAll(".movable").length !== 0 || document.querySelectorAll(".attackable").length !== 0){
+        if(document.querySelectorAll(".movable").length !== 0 || document.querySelectorAll(".attackable").length !== 0 || document.querySelectorAll(".buildable").length !==0){
             removeActionOverlay("movable");
             removeActionOverlay("attackable");
+            removeActionOverlay("buildable");
             return
         }
 
         //Step 1: Remove all previous displays of movement possibilities.
         removeActionOverlay("movable");
         removeActionOverlay("attackable");
+        removeActionOverlay("buildable");
 
         this.refreshEvents();
 
         let movable = unit.calculatePossibleMoves();
         let attackable = unit.calculatePossibleAttacks();
+        let buildable = unit.calculatePossibleBuilds();
+        console.log(buildable);
 
 
         if(movable){
@@ -137,6 +144,18 @@ class Controller{
                 movement.addEventListener("click", unitMovementEvent);
             });
             this.view.displayMovableSquares(movable);
+        }
+
+        
+        if(buildable){
+            buildable.forEach((build)=>{
+                let buildment = convertCoordToHTMLElement(build);
+                let buildEvent = ()=>unit.build(YURT, build);
+                buildment.addEventListener("click", buildEvent );
+                buildment.childNodes[0].classList.add("buildable");
+                buildment.childNodes[0].classList.remove("movable");
+                this.events.push([buildment, buildEvent]);
+            })
         }
 
         if(attackable){
@@ -161,17 +180,6 @@ class Controller{
         this.assignClickEvents();
     }
 
-    calculateBuildableSpots(){
-        let buildable = [];
-
-        this.map.features.forEach((feature)=>{
-            if (feature[2] === "dark_dirt"){
-                buildable.push(feature);
-            }
-        })
-
-        return buildable;
-    }
 
     checkMovable(spot){
         this.updateTakenSpots();

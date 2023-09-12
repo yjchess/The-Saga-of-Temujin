@@ -108,5 +108,16 @@ class View{
         
     }
 
+    displayBuildableSqaures(spots){
+        spots.forEach((spot)=>{
+
+            let location = convertCoordToHTMLElement(spot);
+            location.childNodes[0].classList.remove("movable");
+            location.childNodes[0].classList.add("buildable");
+        });
+
+        
+    }
+
 
 }

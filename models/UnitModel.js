@@ -23,6 +23,7 @@ class Unit{
         this.selected = false;
 
         this.destroyed = false;
+        this.built = false;
 
 
         this.AI_behaviour = AI_behaviour;
@@ -95,10 +96,25 @@ class Unit{
     }
 
     calculatePossibleBuilds(buildingName){
-        let spotsRange = controller.calculateBuildableSpots();
-        spotsRange.forEach((range)=>{
+        let buildable = [];
 
-        })
+        if((buildingName === "yurt")&& (controller.player.resources.food <5) || (buildingName === "farm")&& (controller.player.resources.food <10)) {
+            alert("Not enough food");
+            return;
+        }
+
+        else{
+            this.calculatePossibleMoves().forEach((move)=>{
+                if(convertCoordToHTMLElement(move).classList.contains("dark_dirt") ){
+                    buildable.push(move);
+                }
+            })
+        }
+
+        controller.view.displayBuildableSqaures(buildable);
+        controller.displayMovementPossibilities(this);
+
+        return buildable;
     }
 
     move(coord){
@@ -180,17 +196,22 @@ class Unit{
     }
 
     build(building, coord, unitPref){
+        if(this.built === false){
+            let buildingEntity = new Building(this.owner, building, coord)
+            controller.view.displayBuilding(buildingEntity);
+    
+            if(this.owner === "player"){
+                controller.player.buildings.push(new Building ("player", building, coord))
+            }
+    
+            if(this.owner === "computer"){
+                controller.computer.buildings.push(new Building ("computer", building, coord, unitPref))
+            }
 
-        let buildingEntity = new Building(this.owner, building, coord)
-        controller.view.displayBuilding(buildingEntity);
-
-        if(this.owner === "player"){
-            controller.player.buildings.push(new Building ("player", building, coord))
+            this.built = true;
+            controller.refreshEvents();
         }
 
-        if(this.owner === "computer"){
-            controller.computer.buildings.push(new Building ("computer", building, coord, unitPref))
-        }
 
     }
 
@@ -200,7 +221,7 @@ class Unit{
         let selectedUnit = controller.player.units[0];
 
         controller.player.units.forEach((unit)=>{
-            let x_gap = unit.coord[0] - this.coord[0];
+            // let x_gap = unit.coord[0] - this.coord[0];
             let y_gap = unit.coord[1] - this.coord[1];
 
             // if (x_gap < closestDistance){
