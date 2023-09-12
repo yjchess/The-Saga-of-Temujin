@@ -1,12 +1,1 @@
-function removeActionOverlay(type){
-    document.querySelectorAll(`.${type}`).forEach(square => {square.classList.remove(`${type}`);});
-}
-
-function removeAllOverlays(){
-    removeActionOverlay("movable");
-    removeActionOverlay("attackable");
-}
-
-function convertToHtml([x,y]){
-    return document.querySelector(`.x${x}.y${y}`);
-}
+function removeActionOverlay(e){document.querySelectorAll(`.${e}`).forEach(o=>{o.classList.remove(`${e}`)})}function removeAllOverlays(){removeActionOverlay("movable"),removeActionOverlay("attackable")}function convertToHtml([e,o]){return document.querySelector(`.x${e}.y${o}`)}
