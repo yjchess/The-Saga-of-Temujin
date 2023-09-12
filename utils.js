@@ -1,1 +1,31 @@
-function convertCoordToHTMLElement(t){return document.querySelector(`.x${t[0]}.y${t[1]}`)}function getEntityAt(t){let r=[];controller.player.units.forEach(t=>{r.push(t)}),controller.player.buildings.forEach(t=>{r.push(t)}),controller.computer.units.forEach(t=>{r.push(t)}),controller.computer.buildings.forEach(t=>{r.push(t)});for(let o=0;o<r.length;o++)if(r[o].coord.toString()===t.toString())return r[o]}
+function convertCoordToHTMLElement(coord){
+    let html = document.querySelector(`.x${coord[0]}.y${coord[1]}`);
+    return html;
+}
+
+function getEntityAt(location){
+    let checkable = [];
+
+    controller.player.units.forEach((unit)=>{
+        checkable.push(unit);
+    })
+
+    controller.player.buildings.forEach((building)=>{
+        checkable.push(building);
+    })
+
+    controller.computer.units.forEach((unit)=>{
+        checkable.push(unit);
+    })
+
+    controller.computer.buildings.forEach((building)=>{
+        checkable.push(building);
+    })
+
+    for (let x = 0; x < checkable.length; x++){
+        if(checkable[x].coord.toString() === location.toString()){
+            return checkable[x];
+        }
+    }
+    
+}

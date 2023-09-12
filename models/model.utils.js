@@ -1,1 +1,28 @@
-function calculateBounds(u,n){return adjustBounds([u-n,u+n])}function adjustBounds(u){let n=u;return n[0]<1&&(n[0]=1),n[1]>25&&(n[1]=25),n}function movementRangeSquares(u,n){let t=[],e=calculateBounds(u[0],n),o=calculateBounds(u[1],n);for(let a=e[0];a<=e[1];a++)for(let l=o[0];l<=o[1];l++)t.push([a,l]);return t}
+function calculateBounds(centre, range){
+    let calculatedBound = [centre - range, centre + range];
+    return adjustBounds(calculatedBound);
+}
+
+function adjustBounds(adjustableBounds){
+    //prevent out of bound errors (grid goes from 1-25 (x and y axis))
+    let bounds = adjustableBounds;
+    if(bounds[0] < 1){bounds[0] = 1};
+    if(bounds[1] > 25){bounds[1] = 25};
+    return bounds;
+}
+
+//UnitModel
+function movementRangeSquares(coord, movement){
+    let movableSquares = [];
+    let x_range = calculateBounds(coord[0], movement);
+    let y_range = calculateBounds(coord[1], movement);
+
+    for (let x = x_range[0]; x <= x_range[1]; x++) {
+        for (let y = y_range[0]; y <= y_range[1]; y++) {
+            movableSquares.push([x,y]);
+        }                
+    }
+    
+
+    return (movableSquares);
+}
