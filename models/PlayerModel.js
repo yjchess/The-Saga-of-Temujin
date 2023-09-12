@@ -1,6 +1,5 @@
-class Player extends Playable{
+class Player{
     constructor(level){
-        super();
         switch (level) {
             case 1:
                 this.units =[

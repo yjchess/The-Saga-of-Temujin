@@ -1,7 +1,6 @@
-class Computer extends Playable{
+class Computer{
     constructor(level){
-
-        super();
+        
         switch (level) {
             case 1:
                 this.supply = 5;
