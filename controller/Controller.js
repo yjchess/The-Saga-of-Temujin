@@ -66,31 +66,39 @@ class Controller{
     }
 
     displayHoverInfo(unit){
-        document.querySelector(".imgHover").innerHTML = `<img src = ${unit.name}.png></img>`
-        document.querySelector(".ownerHover").innerHTML = `<b>owner: ${unit.owner}</b>`
-        document.querySelector(".nameHover").innerHTML = `<b>name: ${unit.name}</b>`
-        document.querySelector(".hpHover").innerHTML = `<b>health: ${unit.health}</b>`
-        document.querySelector(".movementHover").innerHTML = `<b>movement: ${unit.movement}</b>`
-        document.querySelector(".rangeHover").innerHTML = `<b>range: ${unit.range}</b>`
-        document.querySelector(".damageHover").innerHTML = `<b>damage: ${unit.damage}</b>`
-        document.querySelector(".buildHover").innerHTML = `<b>build: <br>N.A. in hover</b>`
+        
+        let imgName = unit.name
+        imgName[0].toUpperCase() + imgName[0].slice(1);
+        updateElement(".imgHover", `<img src=${imgName}.png></img>`);
+
+        let properties = getProperties(unit);
+        properties.build = "<br>N.A. in hover";
+    
+        for (let prop in properties) {
+            updateElement(`.${prop}Hover`, `<b>${prop}: ${properties[prop]}</b>`);
+        }
     }
 
     displaySelectInfo(unit){
-        document.querySelector(".imgSelect").innerHTML = `<img src = ${unit.name}.png></img>`
-        document.querySelector(".ownerSelect").innerHTML = `<b>owner: ${unit.owner}</b>`
-        let name = document.querySelector(".nameSelect").innerHTML = `<b>name: ${unit.name}</b>`
-        document.querySelector(".hpSelect").innerHTML = `<b>health: ${unit.health}</b>`
-        document.querySelector(".movementSelect").innerHTML = `<b>movement: ${unit.movement}</b>`
-        document.querySelector(".rangeSelect").innerHTML = `<b>range: ${unit.range}</b>`
-        document.querySelector(".damageSelect").innerHTML = `<b>damage: ${unit.damage}</b>`
-        if(name === `<b>name: villager</b>`){
-            document.querySelector(".buildSelect").innerHTML = `<b>build: <br> <button class ="yurtButton">Yurt</button> <button class="farmButton">Farm</button></b>`;
-            document.querySelector(".yurtButton").addEventListener("click", ()=> unit.calculatePossibleBuilds("yurt"));
-            document.querySelector(".yurtButton").addEventListener("click", ()=> unit.calculatePossibleBuilds("farm"));
+        
+        let imgName = unit.name
+        imgName[0].toUpperCase() + imgName[0].slice(1);
+
+        updateElement(".imgSelect", `<img src=${imgName}.png></img>`);
+
+        let properties = getProperties(unit);
+        properties.build = "<br>N.A. in hover";
+    
+        for (let prop in properties) {
+            updateElement(`.${prop}Select`, `<b>${prop}: ${properties[prop]}</b>`);
         }
-        else{
-            document.querySelector(".buildSelect").innerHTML = `<b>build: <br>Can't Build</b>`
+    
+        if (unit.name === "villager") {
+            updateElement(".buildSelect", `<b>build: <br> <button class ="yurtButton">Yurt</button> <button class="farmButton">Farm</button></b>`);
+            document.querySelector(".yurtButton").addEventListener("click", () => unit.calculatePossibleBuilds("yurt"));
+            document.querySelector(".farmButton").addEventListener("click", () => unit.calculatePossibleBuilds("farm"));
+        } else {
+            updateElement(".buildSelect", `<b>build: <br>Can't Build</b>`);
         }
 
         
@@ -198,23 +206,12 @@ class Controller{
 
     updateTakenSpots(){
 
-        this.takenSpots = [];
-
-        this.player.units.forEach((unit)=>{
-            this.takenSpots.push(unit.coord);
-        })
-
-        this.computer.units.forEach((unit)=>{
-            this.takenSpots.push(unit.coord);
-        })
-
-        this.player.buildings.forEach((building)=>{
-            this.takenSpots.push(building.coord);
-        })
-
-        this.computer.buildings.forEach((building)=>{
-            this.takenSpots.push(building.coord);
-        })
+        this.takenSpots = [
+            ...this.player.units.map(unit => unit.coord),
+            ...this.computer.units.map(unit => unit.coord),
+            ...this.player.buildings.map(building => building.coord),
+            ...this.computer.buildings.map(building => building.coord)
+        ];
 
         this.map.impassableFeatures.forEach((feature)=>{
 
