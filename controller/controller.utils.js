@@ -27,3 +27,12 @@ function getProperties(unit){
 
     return properties;
 }
+
+function handleUnitsEvents(context, units, eventType, eventFunc) {
+    units.forEach((unit) => {
+        let location = convertCoordToHTMLElement(unit.coord);
+        let unitEvent = () => eventFunc.call(context, unit);
+        context.events.push([location, unitEvent]);
+        location.addEventListener(eventType, unitEvent);
+    });
+}

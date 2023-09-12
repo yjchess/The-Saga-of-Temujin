@@ -28,24 +28,9 @@ class Unit{
         this.AI_behaviour = AI_behaviour;
     }
 
-    movementRangeSquares(){
-        let movableSquares = [];
-        let x_range = calculateBounds(this.coord[0], this.movement);
-        let y_range = calculateBounds(this.coord[1], this.movement);
-
-        for (let x = x_range[0]; x <= x_range[1]; x++) {
-            for (let y = y_range[0]; y <= y_range[1]; y++) {
-                movableSquares.push([x,y]);
-            }                
-        }
-        
-
-        return (movableSquares);
-    }
-
     calculatePossibleMoves(){
         if(this.moved === false){
-            let potentialSpots = this.movementRangeSquares();
+            let potentialSpots = movementRangeSquares(this.coord, this.movement);
             let possibleSpots = []
             potentialSpots.forEach((spot)=>{
 
@@ -112,9 +97,7 @@ class Unit{
 
     attack(location){
         let enemy = getEntityAt(location);
-        console.log(enemy.health);
         enemy.health -= this.damage;
-        console.log(enemy.health);
 
         if(enemy.health <= 0){
             enemy.destroySelf();
@@ -122,8 +105,7 @@ class Unit{
         }
         
         this.attacked = true;
-        removeActionOverlay("attackable");
-        removeActionOverlay("movable");
+        removeAllOverlays();
         controller.refreshEvents();
     }
 
@@ -197,7 +179,7 @@ class Unit{
         let selectedUnit = controller.player.units[0];
 
         controller.player.units.forEach((unit)=>{
-            let x_gap = unit.coord[0] - this.coord[0];
+            // let x_gap = unit.coord[0] - this.coord[0];
             let y_gap = unit.coord[1] - this.coord[1];
 
             // if (x_gap < closestDistance){
@@ -236,6 +218,10 @@ class Unit{
 
                     controller.view.eraseUnit(this, this.owner);
                     this.destroyed = true;
+
+                    if(controller.computer.units.length === 0){
+                        controller.nextLevel();
+                    }
                     return;
                 }
                 

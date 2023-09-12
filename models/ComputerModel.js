@@ -1,6 +1,6 @@
 class Computer{
     constructor(level){
-        
+
         switch (level) {
             case 1:
                 this.supply = 5;
@@ -77,7 +77,7 @@ class Computer{
                 else if (unit.AI_behaviour.type ==="aggressive"){
                     // console.log("HERE");
                     let target = unit.findClosestEnemy();
-                    console.log(target);
+                    // console.log(target);
                     // console.log(target);
                     let attackable = unit.calculatePossibleAttacks();
                     attackable.forEach((attackSquare)=>{

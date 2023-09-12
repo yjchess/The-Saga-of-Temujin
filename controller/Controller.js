@@ -1,6 +1,7 @@
 
 class Controller{
     constructor(){
+        this.level = 1;
         this.view = new View();
         this.map = new Map(1);
         this.player = new Player(1);
@@ -31,37 +32,31 @@ class Controller{
     endPlayerTurn(){
 
         this.player.units.forEach((unit)=>{unit.resetMovement();})
-        removeActionOverlay("movable");
-        removeActionOverlay("attackable");
+        removeActionOverlay();
 
         this.computer.computerTurn();
     }
 
+    nextLevel(){
+        this.level += 1;
+        if(this.level === 3){
+            alert("You beat the game!");
+        }
+        else{
+            this.map = new Map(level);
+            this.player = new Player(level);
+            this.computer = new Computer(level);
+            this.startGame();
+        }
+
+        
+    }
+
     assignClickEvents(){
-        this.player.units.forEach((unit)=>{
-            let location = convertCoordToHTMLElement(unit.coord);
-            let unitMovementEvent = ()=>this.displayMovementPossibilities(unit);
-            this.events.push([location, unitMovementEvent]);
-    
-            location.addEventListener("click", unitMovementEvent);
-        })
 
-
-        this.player.units.forEach((unit)=>{
-            let location = convertCoordToHTMLElement(unit.coord);
-            let unitHoverEvent = ()=>this.displayHoverInfo(unit);
-            this.events.push([location, unitHoverEvent]);
-    
-            location.addEventListener("mouseover", unitHoverEvent);
-        })
-
-        this.computer.units.forEach((unit)=>{
-            let location = convertCoordToHTMLElement(unit.coord);
-            let unitHoverEvent = ()=>this.displayHoverInfo(unit);
-            this.events.push([location, unitHoverEvent]);
-    
-            location.addEventListener("mouseover", unitHoverEvent);
-        })
+        handleUnitsEvents(this, this.player.units, "click", this.displayMovementPossibilities);
+        handleUnitsEvents(this, this.player.units, "mouseover", this.displayHoverInfo);
+        handleUnitsEvents(this, this.computer.units, "mouseover", this.displayHoverInfo);
 
     }
 
@@ -105,12 +100,10 @@ class Controller{
     }
 
     displayUnitMovement(unit, move){
+
+        removeAllOverlays();
         this.view.eraseUnit(unit, "player");
         unit.move(move);
-
-        removeActionOverlay("movable");
-        removeActionOverlay("attackable");
-
         this.view.drawUnit(unit, "player");
         this.refreshEvents();
 
@@ -119,14 +112,9 @@ class Controller{
     displayMovementPossibilities(unit){
         this.displaySelectInfo(unit);
         if(document.querySelectorAll(".movable").length !== 0 || document.querySelectorAll(".attackable").length !== 0){
-            removeActionOverlay("movable");
-            removeActionOverlay("attackable");
+            removeAllOverlays();
             return
         }
-
-        //Step 1: Remove all previous displays of movement possibilities.
-        removeActionOverlay("movable");
-        removeActionOverlay("attackable");
 
         this.refreshEvents();
 
@@ -148,7 +136,7 @@ class Controller{
 
         if(attackable){
             attackable.forEach((attack)=>{
-                console.log(attack);
+
                 let attackment = convertToHtml(attack);
                 let unitAttackmentEvent = () => unit.attack(attack);
 
